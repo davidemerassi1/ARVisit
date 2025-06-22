@@ -11,7 +11,7 @@ import SwiftUI
 struct MuseoAccessibileApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RoomSelectorView()
         }
     }
 }
