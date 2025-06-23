@@ -60,4 +60,28 @@ class RoomViewModel: ObservableObject {
             
         }
     }
+    
+    func textGen(textString: String) -> ModelEntity {
+        let material = UnlitMaterial(color: .white)
+        let depth: Float = 0.002
+        let font = UIFont.boldSystemFont(ofSize: 0.06)
+        let lineBreakMode : CTLineBreakMode = .byWordWrapping
+        
+        let textMeshResource : MeshResource = .generateText(textString,
+                                                            extrusionDepth: depth,
+                                                            font: font,
+                                                            containerFrame: .zero,
+                                                            alignment: .center,
+                                                            lineBreakMode: lineBreakMode)
+        
+        let textEntity = ModelEntity(mesh: textMeshResource, materials: [material])
+        textEntity.scale.x *= -1
+        
+        /*
+        let bounds = textEntity.visualBounds(relativeTo: nil)
+            textEntity.position -= bounds.center
+         */
+        
+        return textEntity
+    }
 }

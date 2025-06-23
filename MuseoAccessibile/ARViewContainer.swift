@@ -94,11 +94,21 @@ struct ARViewContainer : UIViewRepresentable {
                         }
                         sphere.model?.materials = [material]
                         sphere.generateCollisionShapes(recursive: true)
+                        
+                        let textEntity = viewModel.textGen(textString: poi.name)
+                        let bounds = textEntity.visualBounds(relativeTo: nil)
+                        let textWidth = bounds.extents.x
+                        textEntity.position = [textWidth / 2, 0.06, 0]
+                        
                         anchorEntity.addChild(sphere)
+                        sphere.addChild(textEntity)
+                        
                         viewModel.arView.scene.anchors.append(anchorEntity)
                         viewModel.arAnchors[anchor.name!] = anchor
+                        
                         //permette di ruotare la sfera in modo che guardi sempre verso l'utente
-                        startBillboard(for: sphere, position: anchorEntity.convert(position: .zero, to: nil), in: viewModel.arView)
+                        startBillboard(for: sphere, in: viewModel.arView)
+                        //startBillboard(for: textEntity,  in: viewModel.arView)
                     }
                 }
             }
@@ -125,7 +135,8 @@ struct ARViewContainer : UIViewRepresentable {
         
         var subscriptions = Set<AnyCancellable>()
 
-        func startBillboard(for entity: Entity, position: SIMD3<Float>, in arView: ARView) {
+        func startBillboard(for entity: Entity,in arView: ARView) {
+            let position = entity.convert(position: .zero, to: nil)
             arView.scene.subscribe(to: SceneEvents.Update.self) { event in
                 guard let cameraTransform = arView.session.currentFrame?.camera.transform else { return }
 
