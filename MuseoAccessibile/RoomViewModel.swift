@@ -35,4 +35,29 @@ class RoomViewModel: ObservableObject {
         }
         return nil
     }
+    
+    func loadIcon(poi: Poi) -> TextureResource? {
+        switch poi.type {
+        case .danger:
+            return try? TextureResource.load(named: "warning")
+        case .interest:
+            return try? TextureResource.load(named: "painting")
+        case .service:
+            switch poi.serviceType {
+            case .toilet:
+                return try? TextureResource.load(named: "wc")
+            case .bench:
+                return try? TextureResource.load(named: "chair")
+            case .exit:
+                return try? TextureResource.load(named: "exit")
+            case .info:
+                return try? TextureResource.load(named: "info")
+            case .lift:
+                return try? TextureResource.load(named: "lift")
+            case .none:
+                return nil
+            }
+            
+        }
+    }
 }

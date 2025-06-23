@@ -8,6 +8,7 @@
 import SwiftUI
 import ARKit
 import RealityKit
+import Combine
 
 struct ARViewContainer : UIViewRepresentable {
     @Binding var selectedPOI: Poi?
@@ -81,38 +82,27 @@ struct ARViewContainer : UIViewRepresentable {
                 if let name = anchor.name {
                     let anchorEntity = AnchorEntity(anchor: anchor)
                     anchorEntity.name = name
-                    let sphere = ModelEntity(mesh: .generateSphere(radius: 0.03))
                     let poi = viewModel.pois[anchorEntity.name]
                     if let poi {
-                        switch poi.type {
-                        case .interest:
-                            sphere.model?.materials = [SimpleMaterial(color: .blue, isMetallic: false)]
-                        case .service:
-                            sphere.model?.materials = [SimpleMaterial(color: .green, isMetallic: false)]
-                        case .danger:
-                            sphere.model?.materials = [SimpleMaterial(color: .red, isMetallic: false)]
+                        let sphere = ModelEntity(mesh: .generateSphere(radius: 0.05))
+                        let texture = viewModel.loadIcon(poi: poi)
+                        var material = SimpleMaterial()
+                        if let texture {
+                            material.color = SimpleMaterial.BaseColor(texture: MaterialParameters.Texture(texture))
+                        } else {
+                            material.color = SimpleMaterial.BaseColor(tint: poi.type == .danger ? .red : poi.type == .service ? .green : .blue)
                         }
+                        sphere.model?.materials = [material]
                         sphere.generateCollisionShapes(recursive: true)
                         anchorEntity.addChild(sphere)
                         viewModel.arView.scene.anchors.append(anchorEntity)
                         viewModel.arAnchors[anchor.name!] = anchor
+                        //permette di ruotare la sfera in modo che guardi sempre verso l'utente
+                        startBillboard(for: sphere, position: anchorEntity.convert(position: .zero, to: nil), in: viewModel.arView)
                     }
                 }
             }
         }
-        
-        /*
-        func updateScene(arView: ARView) {
-            // 1. Rimuovi anchor non più presenti
-            for anchor in arView.scene.anchors {
-                if parent.arMapManager.pois[anchor.name] == nil {
-                    anchor.removeFromParent()
-                }
-            }
-            
-            // 2. Aggiungi anchor nuovi o aggiorna esistenti
-        }
-         */
         
         @objc func handleTap(_ sender: UITapGestureRecognizer) {
             guard let arView = sender.view as? ARView else { return }
@@ -131,6 +121,21 @@ struct ARViewContainer : UIViewRepresentable {
         func coachingOverlayViewDidDeactivate(_ coachingOverlayView: ARCoachingOverlayView) {
             print("ARCoachingOverlayView completato. Tracciamento stabile.")
             // Qui potresti abilitare il pulsante "Salva", ecc.
+        }
+        
+        var subscriptions = Set<AnyCancellable>()
+
+        func startBillboard(for entity: Entity, position: SIMD3<Float>, in arView: ARView) {
+            arView.scene.subscribe(to: SceneEvents.Update.self) { event in
+                guard let cameraTransform = arView.session.currentFrame?.camera.transform else { return }
+
+                let cameraPosition = SIMD3<Float>(cameraTransform.columns.3.x,
+                                                  cameraTransform.columns.3.y,
+                                                  cameraTransform.columns.3.z)
+                
+                entity.look(at: cameraPosition, from: position, relativeTo: nil)
+            }
+            .store(in: &subscriptions)
         }
     }
 }

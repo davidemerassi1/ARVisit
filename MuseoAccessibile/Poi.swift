@@ -17,8 +17,13 @@ struct Poi: Identifiable, Codable, Equatable {
     }
     
     enum ServiceType: String, Codable, CaseIterable, Identifiable {
-        case bagno = "Bagno"
-        var id: String { self.rawValue }
+        case bench = "Panchina",
+             exit = "Uscita di emergenza",
+             info = "Punto informazioni",
+             lift = "Ascensore",
+             toilet = "Bagno"
+        
+        var id: String { rawValue }
     }
     
     var id: UUID
