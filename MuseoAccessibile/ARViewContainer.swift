@@ -71,6 +71,7 @@ struct ARViewContainer : UIViewRepresentable {
         @Binding var selectedPOI: Poi?
         var viewModel: RoomViewModel
         var arrowAnchor: AnchorEntity?
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
         
         init(selectedPOI: Binding<Poi?>, viewModel: RoomViewModel) {
             self.viewModel = viewModel
@@ -113,10 +114,6 @@ struct ARViewContainer : UIViewRepresentable {
                     }
                 }
             }
-            
-            if (arrowAnchor == nil) {
-                startArrow()
-            }
         }
         
         @objc func handleTap(_ sender: UITapGestureRecognizer) {
@@ -135,7 +132,10 @@ struct ARViewContainer : UIViewRepresentable {
         
         func coachingOverlayViewDidDeactivate(_ coachingOverlayView: ARCoachingOverlayView) {
             print("ARCoachingOverlayView completato. Tracciamento stabile.")
-            // Qui potresti abilitare il pulsante "Salva", ecc.
+            
+            if (arrowAnchor == nil) {
+                startArrow()
+            }
         }
         
         var subscriptions = Set<AnyCancellable>()
@@ -178,8 +178,7 @@ struct ARViewContainer : UIViewRepresentable {
                           let max_d = poi.distance else { continue }
                     
                     let poi_d = simd_distance(anchor.position(relativeTo: nil), cameraPosition)
-                    print("Distanza da \(poiname) \(poi_d)")
-                    if poi_d <= (Float(max_d) / 100.0) {
+                    if poi_d <= max_d {
                         if let np = nearestPoi {
                             if poi.type == np.0.type && poi_d > np.1 {
                                 nearestPoi = (poi, poi_d)
@@ -192,9 +191,8 @@ struct ARViewContainer : UIViewRepresentable {
                     }
                 }
                 
-                if (nearestPoi != nil) {
+                if let nearestPoi {
                     arrow.isEnabled = true
-                    print("Sei vicino al poi \(nearestPoi!.0.name)")
                     // Posiziona la freccia a 0.5 metri davanti alla camera
                     let cameraForward = normalize(-SIMD3<Float>(cameraTransform.columns.2.x,
                                                                 cameraTransform.columns.2.y,
@@ -203,14 +201,19 @@ struct ARViewContainer : UIViewRepresentable {
                     let arrowPosition = cameraPosition + cameraForward * 0.5
                     self!.arrowAnchor!.position = arrowPosition
                     
-                    // Calcola la direzione verso il target
-                    if let targetAnchor = arView.scene.findEntity(named: nearestPoi!.0.id.uuidString) {
+                    if let targetAnchor = arView.scene.findEntity(named: nearestPoi.0.id.uuidString) {
                         let targetPosition: SIMD3<Float> = targetAnchor.position(relativeTo: nil)
-                        
                         arrow.look(at: targetPosition, from: arrow.position(relativeTo: nil), relativeTo: nil)
+                        if nearestPoi.0.type == .danger && viewModel.showingText != nearestPoi.0.description {
+                            self!.generator.impactOccurred()
+                            viewModel.showingText = nearestPoi.0.description
+                        } else if nearestPoi.0.type == .interest && viewModel.showingText != "Guarda verso " + nearestPoi.0.name {
+                            viewModel.showingText = "Guarda verso " + nearestPoi.0.name
+                        }
                     }
                 } else {
                     arrow.isEnabled = false
+                    viewModel.showingText = ""
                 }
             }
             .store(in: &subscriptions)

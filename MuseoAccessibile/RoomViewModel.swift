@@ -7,6 +7,7 @@
 
 import ARKit
 import RealityKit
+import SwiftUICore
 
 class RoomViewModel: ObservableObject {
     private var storageManager: StorageManager
@@ -16,6 +17,7 @@ class RoomViewModel: ObservableObject {
     var roomName: String
     let arrow: ModelEntity
     var arrowAnchor: AnchorEntity?
+    @Published var showingText: String = ""
     
     init(roomURL: URL) {
         storageManager = StorageManager(roomURL: roomURL)

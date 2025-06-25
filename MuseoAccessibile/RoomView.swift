@@ -21,6 +21,18 @@ struct RoomView : View {
         ZStack {
             ARViewContainer(selectedPOI: $selectedPOI, viewModel: viewModel)
                 .ignoresSafeArea(edges: .bottom)
+            
+            GeometryReader { geometry in
+                Text(viewModel.showingText)
+                    .foregroundColor(.white)
+                    .font(.largeTitle)
+                    .padding(6)
+                    .cornerRadius(8)
+                    .position(
+                        x: geometry.size.width / 2,
+                        y: geometry.size.height / 2 - 150 // Offset verso l'alto
+                    )
+            }
         }
         .sheet(item: $selectedPOI) { poi in
             PoiDetailView(

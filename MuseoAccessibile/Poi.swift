@@ -35,7 +35,7 @@ struct Poi: Identifiable, Codable, Equatable {
     var linkToDescription: String = ""
     var serviceType: ServiceType?
     var notify: Bool = false
-    var distance: Int?
+    var distance: Float?
     
     init(id: UUID = UUID()) {
         self.id = id
