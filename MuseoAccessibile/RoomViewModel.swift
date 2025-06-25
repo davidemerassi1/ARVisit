@@ -14,11 +14,14 @@ class RoomViewModel: ObservableObject {
     var pois: [String: Poi] = [:]
     var arView: ARView = ARView(frame: .zero)
     var roomName: String
+    let arrow: ModelEntity
+    var arrowAnchor: AnchorEntity?
     
     init(roomURL: URL) {
         storageManager = StorageManager(roomURL: roomURL)
         pois = storageManager.loadPois()
         roomName = String(roomURL.lastPathComponent.dropFirst(5))
+        arrow = try! ModelEntity.loadModel(named: "freccia90")
     }
     
     func getWorldMap() -> ARWorldMap? {
@@ -78,8 +81,8 @@ class RoomViewModel: ObservableObject {
         textEntity.scale.x *= -1
         
         /*
-        let bounds = textEntity.visualBounds(relativeTo: nil)
-            textEntity.position -= bounds.center
+         let bounds = textEntity.visualBounds(relativeTo: nil)
+         textEntity.position -= bounds.center
          */
         
         return textEntity
