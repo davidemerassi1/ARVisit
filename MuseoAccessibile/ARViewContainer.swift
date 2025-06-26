@@ -125,7 +125,7 @@ struct ARViewContainer : UIViewRepresentable {
                 print("Toccato poi con id \(poiId)")
                 if let tapped = viewModel.pois[poiId], tapped.type == .interest {
                     selectedPOI = tapped
-                    print("Il poi ha nome \(tapped.name)")
+                    viewModel.seen.insert(poiId)
                 }
             }
         }
@@ -175,7 +175,9 @@ struct ARViewContainer : UIViewRepresentable {
                 var nearestPoi: (Poi, Float)?
                 for (poiname, poi) in viewModel.pois {
                     guard let anchor = viewModel.arView.scene.findEntity(named: poiname),
-                          let max_d = poi.distance else { continue }
+                          let max_d = poi.distance,
+                          !viewModel.seen.contains(poiname)
+                    else { continue }
                     
                     let poi_d = simd_distance(anchor.position(relativeTo: nil), cameraPosition)
                     if poi_d <= max_d {

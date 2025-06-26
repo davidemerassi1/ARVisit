@@ -16,8 +16,8 @@ class RoomViewModel: ObservableObject {
     var arView: ARView = ARView(frame: .zero)
     var roomName: String
     let arrow: ModelEntity
-    var arrowAnchor: AnchorEntity?
     @Published var showingText: String = ""
+    var seen: Set<String> = []
     
     init(roomURL: URL) {
         storageManager = StorageManager(roomURL: roomURL)

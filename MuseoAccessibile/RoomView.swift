@@ -26,11 +26,11 @@ struct RoomView : View {
                 Text(viewModel.showingText)
                     .foregroundColor(.white)
                     .font(.largeTitle)
-                    .padding(6)
+                    .padding(18)
                     .cornerRadius(8)
                     .position(
                         x: geometry.size.width / 2,
-                        y: geometry.size.height / 2 - 150 // Offset verso l'alto
+                        y: geometry.size.height / 2 + 150
                     )
             }
         }
