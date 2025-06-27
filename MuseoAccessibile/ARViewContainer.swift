@@ -141,8 +141,9 @@ struct ARViewContainer : UIViewRepresentable {
         var subscriptions = Set<AnyCancellable>()
         
         func startBillboard(for entity: Entity,in arView: ARView) {
-            let position = entity.convert(position: .zero, to: nil)
             arView.scene.subscribe(to: SceneEvents.Update.self) { event in
+                let position = entity.convert(position: .zero, to: nil)
+                
                 guard let cameraTransform = arView.session.currentFrame?.camera.transform else { return }
                 
                 let cameraPosition = SIMD3<Float>(cameraTransform.columns.3.x,
