@@ -79,6 +79,14 @@ struct ARViewContainer : UIViewRepresentable {
             super.init()
         }
         
+        func session(_ session: ARSession, didFailWithError error: Error) {
+            if let arError = error as? ARError, arError.code == .cameraUnauthorized {
+                DispatchQueue.main.async {
+                    self.viewModel.showCameraAlert = true
+                }
+            }
+        }
+        
         func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
             for anchor in anchors {
                 if let name = anchor.name {

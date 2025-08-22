@@ -18,6 +18,7 @@ class RoomViewModel: ObservableObject {
     let arrow: ModelEntity
     @Published var showingText: String = ""
     var seen: Set<String> = []
+    @Published var showCameraAlert = false
     
     init(roomURL: URL) {
         storageManager = StorageManager(roomURL: roomURL)

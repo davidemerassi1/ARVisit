@@ -42,5 +42,13 @@ struct RoomView : View {
         }
         .navigationTitle(viewModel.roomName)
         .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            "È necessario concedere il permesso alla fotocamera",
+            isPresented: $viewModel.showCameraAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Passa a Impostazioni per abilitarlo.")
+        }
     }
 }
