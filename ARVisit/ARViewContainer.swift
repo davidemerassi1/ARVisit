@@ -188,7 +188,11 @@ struct ARViewContainer : UIViewRepresentable {
                           !viewModel.seen.contains(poiname)
                     else { continue }
                     
-                    let poi_d = simd_distance(anchor.position(relativeTo: nil), cameraPosition)
+                    let poiPos = anchor.position(relativeTo: nil)
+                    //proietto il punto sullo stesso piano (orizzontale) della camera, in modo da calcolare la distanza orizzontale
+                    let poiProjected = SIMD3<Float>(poiPos.x, cameraPosition.y, poiPos.z)
+                    let poi_d = simd_distance(poiProjected, cameraPosition)
+                    
                     if poi_d <= max_d {
                         if let np = nearestPoi {
                             if poi.type == np.0.type && poi_d > np.1 {
