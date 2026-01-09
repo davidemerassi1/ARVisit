@@ -11,6 +11,7 @@ Il progetto è composto da due applicazioni separate:
 ## Descrizione
 
 ARVisit consente ai visitatori di utilizzare i contenuti creati con *ARVisit Creator* per svolgere una visita museale in realtà aumentata.  
+
 Durante la visita è possibile visualizzare:
 - punti di interesse (opere)
 - punti di servizio (bagni, bar, ecc.)
@@ -22,3 +23,6 @@ Tutti gli elementi vengono mostrati direttamente nello spazio reale attraverso l
 
 - **iOS**
 - **ARKit** (framework Apple per la realtà aumentata)
+
+## Demo video 
+[Link](https://youtube.com/shorts/Nz7HPsYd7qE?feature=share)
