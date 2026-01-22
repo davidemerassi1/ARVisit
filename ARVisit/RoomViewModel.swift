@@ -7,7 +7,7 @@
 
 import ARKit
 import RealityKit
-import SwiftUICore
+import SwiftUI
 
 class RoomViewModel: ObservableObject {
     private var storageManager: StorageManager

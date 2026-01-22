@@ -7,7 +7,7 @@
 
 import RealityKit
 import ARKit
-import SwiftUICore
+import SwiftUI
 
 struct StorageManager {
     var roomURL: URL

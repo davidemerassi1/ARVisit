@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import RealityFoundation
+import RealityKit
 
 struct Poi: Identifiable, Codable, Equatable {
     enum PoiType: String, Codable, CaseIterable, Identifiable {
